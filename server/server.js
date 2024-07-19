@@ -1,14 +1,18 @@
 const express = require("express")
+var bodyParser = require('body-parser')
 require('dotenv').config()
+const dbConnect = require("./config/db.connect")
+const initRoutes = require("./routes/index")
 
 const app = express()
 const port = process.env.PORT || 8888
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+dbConnect()
 
-app.use('/', (req, res) => {
-    res.send('SERVER ONNNNN')
-})
+
+initRoutes(app)
+
 
 app.listen(port, () => {
     console.log("SERVER IS RUNNING on the PORT", port);
