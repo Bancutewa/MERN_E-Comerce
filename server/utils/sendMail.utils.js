@@ -19,9 +19,9 @@ const sendMail = asyncHandler(async ({ email, html }) => {
         subject: "Forgot password", // Subject line
         html: html, // html body
     });
-    return info
-    console.log("Message sent: %s", info.messageId);
     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+    console.log("Message sent: %s", info.messageId);
+    return info
 })
 
 module.exports = {
