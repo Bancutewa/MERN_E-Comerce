@@ -1,4 +1,6 @@
+const { response } = require("express")
 const Product = require("../models/product.model")
+const User = require("../models/user.model")
 const asyncHandler = require("express-async-handler")
 const slugify = require('slugify')
 
@@ -24,11 +26,65 @@ const getProduct = asyncHandler(async (req, res) => {
 })
 
 const getProducts = asyncHandler(async (req, res) => {
-    const products = await Product.find()
-    return res.status(200).json({
-        success: products ? true : false,
-        productsDatas: products ? products : 'Cannot get products'
+    const queries = { ...req.query }
+    // Tach cac truong dac biet ra khoi query
+    const excludeFields = ['limit', 'page', 'sort', 'fields']
+    excludeFields.forEach(el => delete queries[el])
+
+    // Format lai query cho dung dinh dang mongoose (VD: price = gt(500) ==> $gt(500))
+    let queryString = JSON.stringify(queries)
+    queryString = queryString.replace(/\b(gte|gt|lt|lte)\b/g, matchedEl => `$${matchedEl}`)
+    const formatQueries = JSON.parse(queryString)
+
+    let queryCommand
+    // Filtering
+    if (req.query?.title) formatQueries.title = { $regex: queries.title, $options: 'i' }
+    queryCommand = Product.find(formatQueries)
+
+
+    // Sorting
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ')
+        queryCommand = queryCommand.sort(sortBy)
+    } else {
+        queryCommand = queryCommand.sort('-createdAt')
+    }
+
+
+
+    // Fields limiting
+    if (req.query.fields) {
+        const fields = req.query.fields.split(',').join(' ')
+        queryCommand = queryCommand.select(fields)
+    }
+
+    // Pagination
+    const page = +req.query.page || 1
+    const limit = +req.query.limit || 2
+    const skip = (page - 1) * limit
+    queryCommand.skip(skip).limit(limit)
+
+    // Run query
+    queryCommand.then(response => {
+        return Product.find(formatQueries).countDocuments()
+            .then(counts => {
+                res.status(200).json({
+                    success: true,
+                    counts,
+                    productsDatas: response || [],
+                });
+            });
     })
+        .catch(err => {
+            console.error("Error in product query:", err);
+            res.status(500).json({
+                success: false,
+                error: "Internal Server Error"
+            });
+        });
+
+
+
 })
 
 
@@ -36,7 +92,6 @@ const updateProduct = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) throw new Error("Missing inputs")
     const { pid } = req.params
     if (req.body && req.body.title) req.body.slug = slugify(req.body.title)
-    console.log(req.body);
     const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, { new: true })
     return res.status(200).json({
         success: updatedProduct ? true : false,
@@ -52,10 +107,36 @@ const deleteProduct = asyncHandler(async (req, res) => {
         deletedProduct: deletedProduct ? deletedProduct : 'Cannot delete product'
     })
 })
+
+const ratings = asyncHandler(async (req, res) => {
+    const { _id } = req.user
+
+    const { star, comment, pid } = req.body
+    if (!star || !pid) throw new Error("Missing input")
+    const ratingProduct = await Product.findById(pid)
+    const alreadyRating = ratingProduct?.rating?.find(el => el.postedBy.toString() === _id)
+    if (alreadyRating) {
+        await Product.updateOne({
+            rating: { $elemMatch: alreadyRating }
+        }, {
+            $set: { "rating.$.star": star, "rating.$.comment": comment }
+        })
+    }
+    else {
+        await Product.findByIdAndUpdate(pid, {
+            $push: { rating: { star, comment, postedBy: _id } }
+        }, { new: true })
+    }
+    return res.status(200).json({
+        status: true
+    }
+    )
+})
 module.exports = {
     createProduct,
     getProduct,
     getProducts,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    ratings
 }
