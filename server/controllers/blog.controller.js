@@ -29,8 +29,7 @@ const getBlogs = asyncHandler(async (req, res) => {
 
 const likeBlog = asyncHandler(async (req, res) => {
     const { _id } = req.user
-    const { bid } = req.body
-    console.log(bid);
+    const { bid } = req.params
 
     if (!bid) throw new Error("Missing Input")
     const blog = await Blog.findById(bid)
@@ -62,9 +61,63 @@ const likeBlog = asyncHandler(async (req, res) => {
     }
 })
 
+const dislikeBlog = asyncHandler(async (req, res) => {
+    const { _id } = req.user
+    const { bid } = req.params
+
+    if (!bid) throw new Error("Missing Input")
+    const blog = await Blog.findById(bid)
+
+    const alreadyLiked = blog.likes?.find(el => el.toString() === _id)
+    if (alreadyLiked) {
+        const response = await Blog.findByIdAndUpdate(bid, { $pull: { likes: _id } }, { new: true })
+        return res.json({
+            success: response ? true : false,
+            rs: response
+        })
+    }
+
+    const isDisLiked = blog.dislikes?.find(el => el.toString() === _id)
+    if (isDisLiked) {
+        const response = await Blog.findByIdAndUpdate(bid, { $pull: { dislikes: _id } }, { new: true })
+        return res.json({
+            success: response ? true : false,
+            rs: response
+        })
+    } else {
+        const response = await Blog.findByIdAndUpdate(bid, { $push: { dislikes: _id } }, { new: true })
+        return res.json({
+            success: response ? true : false,
+            rs: response
+        })
+    }
+})
+
+const getBlog = asyncHandler(async (req, res) => {
+    const { bid } = req.params
+    const blog = await Blog.findByIdAndUpdate(bid, { $inc: { numberViews: 1 } }, { new: true })
+        .populate('likes', '_id firstName lastName')
+        .populate('dislikes', '_id firstName lastName')
+    return res.json({
+        success: blog ? true : false,
+        rs: blog
+    })
+})
+
+const deleteBlog = asyncHandler(async (req, res) => {
+    const { bid } = req.params
+    const blog = await Blog.findByIdAndDelete(bid)
+    return res.json({
+        success: blog ? true : false,
+        rs: blog || 'Sth went wrong'
+    })
+})
 module.exports = {
     createBlog,
     updateBlog,
     getBlogs,
-    likeBlog
+    likeBlog,
+    dislikeBlog,
+    getBlog,
+    deleteBlog
 }

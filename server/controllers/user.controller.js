@@ -82,7 +82,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const logout = asyncHandler(async (req, res) => {
     const cookie = req.cookies
     if (!cookie && !cookie.refreshToken) throw new Error("No refresh token in cookies")
-    await User.findOneAndUpdate({ refresToken: cookie.refreshToken }, { refreshToken: "" }, { new: true })
+    await User.findOneAndUpdate({ refreshToken: cookie.refreshToken }, { refreshToken: "" }, { new: true })
     res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: true
@@ -116,6 +116,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
     const { password, token } = req.body
+    // Giai ma token dc duoc gui
     const passwordResetToken = crypto.createHash('sha256').update(token).digest('hex')
     const user = await User.findOne({ passwordResetToken, passwordResetExpires: { $gt: Date.now() } })
     if (!user) throw new Error("Invalid reset token")
