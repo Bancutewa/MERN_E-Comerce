@@ -7,7 +7,7 @@ productRouter.post(("/"), [verifyAccessToken, isAdmin], productController.create
 productRouter.get(("/"), [verifyAccessToken, isAdmin], productController.getProducts)
 productRouter.put(("/ratings"), [verifyAccessToken], productController.ratings)
 
-productRouter.put(("/uploadimage/:pid"), [verifyAccessToken, isAdmin], uploadCloud.single('images'), productController.uploadImageProduct)
+productRouter.put(("/uploadimage/:pid"), [verifyAccessToken, isAdmin], uploadCloud.array('images', 10), productController.uploadImageProduct)
 productRouter.put(("/:pid"), [verifyAccessToken, isAdmin], productController.updateProduct)
 productRouter.delete(("/:pid"), [verifyAccessToken, isAdmin], productController.deleteProduct)
 productRouter.get(("/:pid"), productController.getProduct)
