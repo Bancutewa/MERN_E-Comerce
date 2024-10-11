@@ -8,7 +8,7 @@
 # /database
 # testing
 /coverage
-# /server/.env
+/server/.env
 # production
 /build
 
