@@ -27,7 +27,7 @@ const getProduct = asyncHandler(async (req, res) => {
 
 const getProducts = asyncHandler(async (req, res) => {
     const queries = { ...req.query }
-    // Tach cac truong dac biet ra khoi query
+    // Tach cac truong dac biet ra khoi query, lưu vào queries
     const excludeFields = ['limit', 'page', 'sort', 'fields']
     excludeFields.forEach(el => delete queries[el])
 
@@ -51,16 +51,16 @@ const getProducts = asyncHandler(async (req, res) => {
     }
 
 
-
     // Fields limiting
     if (req.query.fields) {
         const fields = req.query.fields.split(',').join(' ')
         queryCommand = queryCommand.select(fields)
     }
 
+
     // Pagination
     const page = +req.query.page || 1
-    const limit = +req.query.limit || 2
+    const limit = +req.query.limit || 20
     const skip = (page - 1) * limit
     queryCommand.skip(skip).limit(limit)
 
@@ -70,6 +70,7 @@ const getProducts = asyncHandler(async (req, res) => {
             .then(counts => {
                 res.status(200).json({
                     success: true,
+                    total: response.length,
                     counts,
                     productsDatas: response || [],
                 });

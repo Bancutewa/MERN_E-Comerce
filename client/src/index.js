@@ -5,6 +5,8 @@ import { store } from './store/store';
 import App from './App';
 import './index.css';
 import { BrowserRouter } from 'react-router-dom'
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const container = document.getElementById('root');
 const root = createRoot(container);

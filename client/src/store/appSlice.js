@@ -11,7 +11,6 @@ export const appSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(actions.getCategories.fulfilled, (state, action) => {
-                console.log(action);
                 state.isLoading = false;
                 state.categories = action.payload;
             })
