@@ -3,12 +3,12 @@ import { Route, Routes } from 'react-router-dom'
 import { Login, Home, Public } from "./pages/public"
 import path from './utils/path'
 import { useDispatch } from 'react-redux';
-import { getCategories } from './store/asynsActions';
+import { getCategories } from './store/category/asynsActions';
 function App() {
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getCategories())
-  }, [])
+  }, [dispatch])
   return (
     <div className="min-h-screen font-main">
       <Routes>

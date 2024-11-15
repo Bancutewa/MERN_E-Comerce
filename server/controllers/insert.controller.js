@@ -17,7 +17,8 @@ const convertProduct = async (product) => {
         sold: Math.round(Math.random() * 100),
         images: product?.images,
         color: product?.variants?.find(el => el.label === 'Color')?.variants[0],
-        thumb: product?.thumb
+        thumb: product?.thumb,
+        totalRatings: Math.round(Math.random() * 5)
 
     })
 }
@@ -32,8 +33,8 @@ const convertCategory = async (category) => {
     await ProductCategory.create({
         title: category?.cate,
         slug: slugify(category?.cate),
-        brand: category?.brand
-
+        brand: category?.brand,
+        image: category?.image
     })
 }
 const insertCategory = asyncHandler(async (req, res) => {

@@ -18,7 +18,7 @@ button.slick-next::before {
   width: 80px;
   height: 80px;
   font-size: 30px;
-  background-color: #f5d7d7;
+  /* background-color: #f5d7d7; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,7 +30,7 @@ button.slick-prev::before {
   width: 80px;
   height: 80px;
   font-size: 30px;
-  background-color: #f5d7d7;
+  /* background-color: #f5d7d7; */
   display: flex;
   justify-content: center;
   align-items: center;
