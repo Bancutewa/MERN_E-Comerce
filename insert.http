@@ -1,0 +1,5 @@
+###
+POST http://localhost:5000/dumpy-data/product
+
+###
+POST http://localhost:5000/dumpy-data/cate
