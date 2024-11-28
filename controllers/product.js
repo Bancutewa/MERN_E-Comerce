@@ -71,7 +71,7 @@ exports.create = async (req, res) => {
 exports.remove = async (req, res) => {
   try {
     let product = req.product;
-    await product.remove();
+    await product.deleteOne();
     res.json({ message: 'Product deleted successfully' });
   } catch (err) {
     return res.status(400).json({ error: errorHandler(err) });
