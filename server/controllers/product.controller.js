@@ -27,7 +27,7 @@ const getProduct = asyncHandler(async (req, res) => {
 
 const getProducts = asyncHandler(async (req, res) => {
     const queries = { ...req.query }
-    // Tach cac truong dac biet ra khoi query, lưu vào queries
+    // Tach cac truong dac biet ra khoi query, lưu vào queries để tự xử lý
     const excludeFields = ['limit', 'page', 'sort', 'fields']
     excludeFields.forEach(el => delete queries[el])
 

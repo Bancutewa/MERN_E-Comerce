@@ -7,12 +7,16 @@ const { IoIosArrowForward } = icons
 const Home = () => {
     const { newProducts } = useSelector((state) => state.product);
     const { categories } = useSelector((state) => state.category);
+    const { isLoggedIn, current } = useSelector((state) => state.user)
+    console.log(isLoggedIn);
+    console.log(current);
+
     return (
         <>
             <div className='w-main flex'>
                 <div className=' flex flex-col gap-5 w-[25%] flex-auto'>
                     <Sidebar />
-                    {/* <DealDaily /> */}
+                    <DealDaily />
                 </div>
                 <div className=' flex flex-col gap-5 pl-5 w-[75%] flex-auto'>
                     <Banner />
@@ -59,7 +63,6 @@ const Home = () => {
                     ))}
                 </div>
             </div>
-            <div className='w-full h-[500px]'></div>
         </>
     )
 }
