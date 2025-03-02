@@ -56,6 +56,9 @@ var userSchema = new mongoose.Schema({
     passwordResetExpires: {
         type: String
     },
+    registerToken: {
+        type: String
+    },
 }, {
     timestamps: true
 });
@@ -74,9 +77,10 @@ userSchema.methods = {
     },
     createPasswordChangedToken: function () {
         const resetToken = crypto.randomBytes(32).toString('hex')
+        // Trước khi trả token về cho client thì đã được hash và lưu trong db
         this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
         this.passwordResetExpires = Date.now() + 15 * 60 * 1000
-        return resetToken //tra ve token trc khi dc hash, trong db da hash
+        return resetToken //Trả về token gốc CHƯA ĐƯỢC hash
     }
 }
 //Export the model

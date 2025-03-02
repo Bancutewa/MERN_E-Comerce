@@ -10,7 +10,8 @@ module.exports = {
         main: '1220px',
       },
       backgroundColor: {
-        main: '#ee3131'
+        main: '#ee3131',
+        overlay: 'rgba(0,0,0,0.3)',
       },
       colors: {
         main: '#ee3131',

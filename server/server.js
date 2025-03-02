@@ -9,7 +9,8 @@ const cors = require('cors')
 const app = express()
 app.use(cors({
     origin: process.env.CLIENT_URL || "http://localhost:8080/api/v1",
-    methods: ['GET', 'POST, PUT', 'DELETE']
+    methods: ['GET', 'POST, PUT', 'DELETE'],
+    credentials: true
 }))
 const port = process.env.PORT || 8888
 app.use(bodyParser.urlencoded({ extended: false }))
